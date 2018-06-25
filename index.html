@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='width=device-width, initial-scale=1' name='viewport'/>
+    <title>My To-Do</title>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+	<script type="text/javascript" src=""></script>
+	<script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Pacifico');
+@import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inconsolata';
+}
+
+.containerHead {
+    width:100vw;
+    height: 0;
+    text-align: center;
+}
+.containerHead h1 {
+    margin-top: 5%;
+    font-family: 'Pacifico';
+    font-size: 50px;
+    background: -webkit-linear-gradient(right, #40e0d0 0%, #ff8c00 50%, #ff0080 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.containerFooter {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 50px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+.containerFooter p {
+    margin-top: 15px;
+    font-weight: bold;
+    background: -webkit-linear-gradient(right, #40e0d0 0%, #ff8c00 50%, #ff0080 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.containerFooter p i {
+    background-color: #00d8ff;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.container-taskList {
+    width:50%;
+    position: absolute;
+    left:50%;
+    top:30%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+input {
+    width:70%;
+    height: 30px;
+    border-radius: 5px 0px 0px 5px;
+    border: none;
+    box-shadow: 10px 10px 40px lightgray;
+    text-align: center;
+    margin-bottom: 60px;
+}
+.add-Button,
+.search-button{
+    height: 30px;
+    width: 30px;
+    border: none;
+    box-shadow: 10px 10px 40px lightgray;
+    text-align: center;
+    margin-bottom: 60px;
+    color: white;
+    outline: none;
+    background: -webkit-linear-gradient(#ff8c00 0%, #ff0080 100%);
+}
+.search-button {
+    border-radius: 0px 5px 5px 0px;
+}
+
+.add-Button,
+.search-button:hover {
+        cursor: pointer;
+}
+
+.container-task {
+position: relative;
+border-radius: 9px; 
+margin-bottom: 15px;
+padding-bottom: 5px;
+transition: .2s;
+}
+
+.container-task:hover {
+background-color: #F9F9F9;
+cursor: pointer;
+padding-top: 30px;
+transition: .2s;
+}
+
+.checked {
+opacity: .5;
+background-color: #D2F4D2;
+text-decoration: line-through;
+}
+
+.container-buttons {
+        opacity: 0;
+        transform: translateY(45px); 
+}
+
+.active {
+outline: none;            
+transform: translateY(25px);
+transition: .8s;
+opacity: 1;
+}
+
+.done {     
+position: absolute;
+bottom: 35px;
+left: 40%;
+border: none;
+background-color: transparent;
+transition: .2s;
+}
+
+.done:hover {
+cursor: pointer;
+transition: .2s;
+transform: scale(1.5);
+}
+
+.done:focus {
+    outline: none;
+}
+
+.done i {
+ color: #A0DB8E;
+}
+
+.delete {   
+ position: absolute;
+ bottom: 35px;
+ right: 40%;
+ border: none;
+ background-color: transparent;
+ transition: .2s;
+}
+
+.delete i{
+color: #FF4040;
+}
+
+.delete:hover {
+cursor: pointer;          
+transition: .2s;
+transform: scale(1.5);
+}
+
+.delete:focus{
+    outline: none;
+}
+	</style>
+
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+/*******Index********/
+class Index extends React.Component {
+	render () {
+		return (
+			<div>
+				<App />
+			</div>
+			)
+	}
+}
+
+/*********App***********/
+
+class App extends React.Component {
+
+	constructor(){
+		super()
+
+		this.state={
+			items: [],
+			checked: []
+		}
+	}
+
+	addTask(e) {
+	e.preventDefault();
+	const allTask = [...this.state.items]
+	const task = this.taskInput.value
+	allTask.push(task)
+	allTask.slice(0, -10)
+	this.setState({ items: allTask })
+	this.taskInput.value = ''
+		
+	//Checked
+	const allChecked = [...this.state.checked]
+	allChecked.push(0)
+	this.setState({ checked: allChecked })
+	}
+	
+	handleDelete(itemToBeDeleted) {
+	this.state.items.splice(itemToBeDeleted, 1)
+	this.state.checked.splice(itemToBeDeleted, 1)
+	this.setState()
+	}
+	
+	checkTask(itemToBeChecked, stateCheck) {
+	let allState = [...this.state.checked]
+		
+	if(allState[itemToBeChecked] === 0)
+	allState[itemToBeChecked] = 1
+	else
+	allState[itemToBeChecked] = 0
+		
+	this.setState({ checked: allState })
+	}
+
+	render() {
+		const tasks = this.state.items.map((item, index) => { if(this.state.checked[index] === 0) {
+		return <Task 
+		num={ index }
+		handleDelete={ this.handleDelete.bind(this) }
+		checkTask={ this.checkTask.bind(this) }
+		details={ item } 
+		checkedClass=''/>
+		}
+		else {
+		return <Task 
+		num={ index }
+		handleDelete={ this.handleDelete.bind(this) }
+		checkTask={ this.checkTask.bind(this) }
+		details={ item } 
+		checkedClass='checked'/>
+		}
+		})
+
+		return (
+		<div>
+			<Header />
+				<div className="container-taskList">
+					<form onSubmit={ e => this.addTask(e) }>
+						<input required
+									type="text" 
+									placeholder="Add task"
+									ref={ input => this.taskInput = input }>
+							</input>
+						<button type="submit"className="add-Button">
+							<i className="fa fa-plus"></i>
+						</button>
+						<button type="submit" className="search-button">
+						<i className="fa fa-search"></i>
+						</button>
+						</form>
+						{ tasks }
+					</div>
+				<Footer />
+			</div>
+			)
+	}
+
+}
+
+/**********Footer************/
+
+class Footer extends React.Component {
+	render () {
+		return (
+			<div className="containerFooter">
+				<p>Made with <i className="fab fa-react"></i> at Home</p>
+
+			</div>
+			)
+
+	}
+}
+
+
+/**********Header***********/
+class Header extends React.Component {
+	render () {
+		return (
+			<div className="containerHead">
+				<h1>My To-Do</h1>
+			</div>
+			)
+	}
+}
+
+/***********Task************/
+
+class Task extends React.Component {
+	
+	constructor(props) {
+		super(props)
+		
+		this.state = {
+			showHideIcons: ""
+		}
+	}
+	
+	showIcons() {
+		this.setState({ showHideIcons: "active" })
+	}
+	hideIcons() {
+		this.setState({ showHideIcons: "" })
+	}
+		
+	render() {
+		return(
+			<div>
+				<div className={ "container-task " + this.props.checkedClass }
+					onMouseOver={ this.showIcons.bind(this) }
+					onMouseLeave={ this.hideIcons.bind(this) }>
+					<div className={"container-buttons " + this.state.showHideIcons }>
+						<button className="done" 
+						onClick={ this.props.checkTask.bind(null, this.props.num, this.state.check) }>
+							<i className="fas fa-check"></i>
+						</button>
+						<button className="delete"
+										onClick={ this.props.handleDelete.bind(null, this.props.num) }>
+							<i className="fas fa-trash-alt"></i>
+						</button>
+					</div>
+					<p>{ this.props.details }</p>
+				</div>
+			</div>
+		)
+	}
+}
+
+/*********Render************/
+
+ReactDOM.render(
+	<App />,
+	document.getElementById('root')
+)	
+</script>
+
+  </body>
+</html>
